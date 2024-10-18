@@ -98,6 +98,7 @@
                         camera_desc.textContent = "얼굴이 잘 보여요!"
                     }
                     else if (face_stack < 10) {
+                        camera_border.style.borderColor = 'orange'
                         camera_desc.textContent = (10-face_stack) + "초 간 유지하세요"
                         face_data.push(imageData)
                     }
