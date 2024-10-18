@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/cute-alert-master/style.css') }}">
+    <script src="{{ url_for('static', filename='libs/cute-alert-master/cute-alert.js') }}"></script>
+    <style>
+        @font-face {
+            font-family: 'BMYEONSUNG_ttf';
+            src: url('{{ url_for('static', filename='fonts/BMYEONSUNG_ttf.ttf') }}') format('truetype');
+        }
+        body {
+            font-family: 'BMYEONSUNG_ttf', 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200">
+    <div class="fixed top-0" style="left: 20%; margin: 1rem;">
+        <h1 class="text-2xl font-bold">타이틀</h1>
+    </div>
+    <div class="flex justify-center items-center h-screen">
+        <div class="text-center">
+            <h2 class="text-4xl font-bold mb-4">얼굴을 보여주세요</h2>
+            <div id="camera-border" class="border-2 border-gray-400 rounded-lg h-96 w-96 mb-4 flex items-center justify-center overflow-hidden">
+                <video id="main-camera" class="object-contain h-full w-full" autoplay></video>
+            </div>
+            <p id="camera-desc" class="text-lg mt-4">카메라에 얼굴을 보여주세요</p>
+        </div>
+    </div>
+</body>
+
+<script>
+    const video = document.getElementById('main-camera');
+    const camera_border = document.getElementById('camera-border');
+    const camera_desc = document.getElementById('camera-desc');
+
+    navigator.mediaDevices.getUserMedia({
+            video: true
+        })
+        .then((stream) => {
+            video.srcObject = stream;
+        })
+        .catch((err) => {
+            console.error("Error accessing the camera: ", err);
+            cuteToast({
+                type: "error", // or 'info', 'error', 'warning'
+                title: "카메라를 감지하지 못했습니다.",
+                message: "권한을 허용하셨나요?",
+                timer: 3000,
+            })
+        });
+    
+    function start_capture() {
+        let face_stack = 0
+        let face_data = []
+        let capture_interval = setInterval(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+    
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+            const imageData = canvas.toDataURL('image/jpeg');
+    
+            fetch('http://hanhow.szk.kr/face/is_face', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: imageData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_face) {
+                        camera_border.style.borderColor = 'lime'
+                        face_stack += 1
+                    }
+                    else {
+                        camera_border.style.borderColor = 'red'
+                        face_stack = 0
+                    }
+                    
+                    if (face_stack == 0) {
+                        camera_desc.textContent = "카메라에 얼굴을 보여주세요."
+                        imageData = []
+                    }
+                    else if (face_stack < 5) {
+                        camera_desc.textContent = "얼굴이 잘 보여요!"
+                    }
+                    else if (face_stack < 10) {
+                        camera_desc.textContent = (10-face_stack) + "초 간 유지하세요"
+                        face_data.push(imageData)
+                    }
+                    else {
+                        clearInterval(capture_interval)
+                        face_stack = 0
+                        camera_desc.textContent = "잠시만 기다려주세요 . . ."
+                    }
+                    console.log(face_stack)
+                })
+                .catch(error => {
+                    console.error("Error server connect: " + error)
+                    cuteToast({
+                        type: "error", // or 'info', 'error', 'warning'
+                        title: "서버와 연결이 실패했습니다.",
+                        message: "인터넷은 잘 연결되어있나요?",
+                        timer: 3000,
+                    })
+                    clearInterval(capture_interval)
+                    camera_border.style.borderColor = 'gray'
+                    camera_desc.textContent = ""
+                    camera_desc.innerHTML = "<a href='{{ prcs_url }}' style='color: blue;'>새로고침</a> 후 다시 시도하세요."
+                    face_stack = 0
+                });
+        }, 1000);
+    }
+    start_capture()
+</script>
+
+</html>

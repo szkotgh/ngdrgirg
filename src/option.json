@@ -1,0 +1,5 @@
+{
+    "dect_model_path": "./src/models/face-detection-adas-0001",
+    "reid_model_path": "./src/models/face-reidentification-retail-0095",
+    "TEMP_DIR_PATH": "./src/temp"
+}
