@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/cute-alert-master/style.css') }}">
+    <script src="{{ url_for('static', filename='libs/cute-alert-master/cute-alert.js') }}"></script>
+    <style>
+        @font-face {
+            font-family: 'BMYEONSUNG_ttf';
+            src: url('{{ url_for('static', filename='fonts/BMYEONSUNG_ttf.ttf') }}') format('truetype');
+        }
+        body {
+            font-family: 'BMYEONSUNG_ttf', 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200">
+    <div class="fixed top-0" style="left: 20%; margin: 1rem;">
+        <h1 class="text-2xl font-bold">App Bar</h1>
+    </div>
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>
