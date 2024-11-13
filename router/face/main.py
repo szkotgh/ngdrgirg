@@ -27,17 +27,3 @@ def is_face():
     except Exception as e:
         return jsonify({'status': 'error', 'status_msg': f"An unknown error has occurred: {str(e)}"})
 
-@face_bp.route('/upload', methods=['POST'])
-def upload_image():
-    try:
-        data = request.get_json()
-        image_data = data['image']
-        image_data = re.sub('^data:image/.+;base64,', '', image_data)
-        image_bytes = base64.b64decode(image_data)
-
-        with open('example.jpg', 'wb') as f:
-            f.write(image_bytes)
-
-        return jsonify({'status': 'success', 'message': 'Image uploaded successfully!'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)})

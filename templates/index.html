@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    #camera-border {
+        transition: 0.2s;
+    }
+    #camera-border:hover {
+        transform: scale(1.1);
+        transition: 0.2s;
+    }
+</style>
+
 <div class="flex justify-center items-center h-screen">
     <div class="text-center">
         <h2 class="text-4xl font-bold mb-4">얼굴을 보여주세요</h2>
@@ -15,11 +25,11 @@
     const video = document.getElementById('main-camera');
     const camera_border = document.getElementById('camera-border');
     const camera_desc = document.getElementById('camera-desc');
+    let camera_enabled = false;
 
-    navigator.mediaDevices.getUserMedia({
-            video: true
-        })
+    navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
+            start_capture();
             video.srcObject = stream;
         })
         .catch((err) => {
@@ -29,22 +39,22 @@
                 title: "카메라를 감지하지 못했습니다.",
                 message: "권한을 허용하셨나요?",
                 timer: 3000,
-            })
+            });
         });
-    
+
     function start_capture() {
-        let face_stack = 0
-        let face_data = []
+        let face_stack = 0;
+        let face_data = [];
         let capture_interval = setInterval(() => {
             const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-    
+
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
+            
             const imageData = canvas.toDataURL('image/jpeg');
-    
+            
             fetch('{{ prcs_url }}/face/is_face', {
                     method: 'POST',
                     headers: {
@@ -56,50 +66,44 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     if (data.is_face) {
-                        camera_border.style.borderColor = 'lime'
-                        face_stack += 1
+                        camera_border.style.borderColor = 'lime';
+                        face_stack += 1;
+                    } else {
+                        camera_border.style.borderColor = 'red';
+                        face_stack = 0;
                     }
-                    else {
-                        camera_border.style.borderColor = 'red'
-                        face_stack = 0
-                    }
-                    
+
                     if (face_stack == 0) {
-                        camera_desc.textContent = "카메라에 얼굴을 보여주세요."
-                        imageData = []
+                        camera_desc.textContent = "카메라에 얼굴을 보여주세요.";
+                        face_data = [];
+                    } else if (face_stack < 3) {
+                        camera_desc.textContent = "얼굴이 잘 보여요!";
+                    } else if (face_stack < 8) {
+                        camera_border.style.borderColor = 'orange';
+                        camera_desc.textContent = (8 - face_stack) + "초 간 유지하세요";
+                        face_data.push(imageData);
+                    } else {
+                        clearInterval(capture_interval);
+                        camera_desc.textContent = "잠시만 기다려주세요 . . .";
                     }
-                    else if (face_stack < 5) {
-                        camera_desc.textContent = "얼굴이 잘 보여요!"
-                    }
-                    else if (face_stack < 10) {
-                        camera_border.style.borderColor = 'orange'
-                        camera_desc.textContent = (10-face_stack) + "초 간 유지하세요"
-                        face_data.push(imageData)
-                    }
-                    else {
-                        clearInterval(capture_interval)
-                        face_stack = 0
-                        camera_desc.textContent = "잠시만 기다려주세요 . . ."
-                    }
-                    console.log(face_stack)
                 })
                 .catch(error => {
-                    console.error("Error server connect: " + error)
+                    console.error("Error server connect: " + error);
                     cuteToast({
                         type: "error", // or 'info', 'error', 'warning'
                         title: "서버와 연결을 실패했습니다.",
                         message: "인터넷은 잘 연결되어있나요?",
                         timer: 3000,
-                    })
-                    clearInterval(capture_interval)
-                    camera_border.style.borderColor = 'gray'
-                    camera_desc.textContent = ""
-                    camera_desc.innerHTML = "<a href='{{ prcs_url }}' style='color: blue;'>새로고침</a> 후 다시 시도하세요."
-                    face_stack = 0
+                    });
+                    clearInterval(capture_interval);
+                    camera_border.style.borderColor = 'gray';
+                    camera_desc.textContent = "";
+                    camera_desc.innerHTML = "<a href='{{ prcs_url }}' style='color: blue;'>새로고침</a> 후 다시 시도하세요.";
+                    face_stack = 0;
                 });
         }, 1000);
     }
-    start_capture()
 </script>
 {% endblock %}

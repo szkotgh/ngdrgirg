@@ -103,4 +103,6 @@ class FaceRecognition:
     def is_face(self, _image_path, _detection_threshold=0.5):
         image = self.preprocess_image(_image_path)
         face = self.extract_face(image, _detection_threshold)
+        if os.path.exists(_image_path):
+            os.remove(_image_path)
         return face is not None
