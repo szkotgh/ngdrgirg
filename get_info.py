@@ -17,10 +17,10 @@ INFO_JSON_PATH = './info.json'
 FACES_DIR_PATH = './faces'
 PAGES_DIR_PATH = './pages'
 
-if not os.path.exists('faces'):
-    os.makedirs('faces')
-if not os.path.exists('pages'):
-    os.makedirs('pages')
+if not os.path.exists(FACES_DIR_PATH):
+    os.makedirs(FACES_DIR_PATH)
+if not os.path.exists(PAGES_DIR_PATH):
+    os.makedirs(PAGES_DIR_PATH)
 
 for i in tqdm(range(start_index, end_index + 1)):
     params = {
@@ -54,6 +54,7 @@ for i in tqdm(range(start_index, end_index + 1)):
         
         img_tag = person.select_one('div.thumb img')
         img_url = img_tag['src']
+        img_name = None
         if img_url == '/img/service/none_profile.png':
             img_path = None
         else:
@@ -75,7 +76,7 @@ for i in tqdm(range(start_index, end_index + 1)):
             'organization': organization,
             'activities': activities,
             'content': content,
-            'image': img_path
+            'image': img_name
         })
 
     with open(INFO_JSON_PATH, 'w', encoding='utf-8') as f:
