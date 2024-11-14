@@ -46,7 +46,6 @@ class FaceRecognition:
         return None
 
     def get_face_embedding(self, image_path, detection_threshold=0.5):
-        """Extracts the face from the image and returns its embedding."""
         image = self.preprocess_image(image_path)
         face = self.extract_face(image, detection_threshold)
         
@@ -58,25 +57,21 @@ class FaceRecognition:
         return face_embedding.flatten()
 
     def calculate_similarity(self, base_face_embedding, input_face_embedding):
-        """Calculates cosine similarity between two face embeddings."""
         base_norm = np.linalg.norm(base_face_embedding)
         input_norm = np.linalg.norm(input_face_embedding)
         similarity = np.dot(base_face_embedding, input_face_embedding) / (base_norm * input_norm)
         return similarity
 
     def compare_faces(self, base_face_embedding, input_face_embedding):
-        """Compares two face embeddings and returns similarity score."""
         similarity = self.calculate_similarity(base_face_embedding, input_face_embedding)
         return similarity
 
     def is_face(self, image_path, detection_threshold=0.5):
-        """Checks if a face is detected in the given image."""
         image = self.preprocess_image(image_path)
         face = self.extract_face(image, detection_threshold)
         return face is not None
 
     def annotate_faces(self, image_path, output_path, capture_time, detection_threshold=0.5):
-        """Detects faces in the image and annotates them with bounding boxes and timestamp."""
         image = cv2.imread(image_path)
         if image is None:
             raise ValueError(f"Unable to load image: {image_path}")
