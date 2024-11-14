@@ -19,6 +19,8 @@ PAGES_DIR_PATH = './pages'
 
 if not os.path.exists('faces'):
     os.makedirs('faces')
+if not os.path.exists('pages'):
+    os.makedirs('pages')
 
 for i in tqdm(range(start_index, end_index + 1)):
     params = {
