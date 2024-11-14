@@ -45,5 +45,5 @@ def get_client_ip(request) -> str:
         return request.headers.getlist("X-Forwarded-For")[0]
     return request.remote_addr
 
-def gen_hash(data: str | None = str(random.randbytes)) -> str:
+def gen_hash(data: str | None = str(os.urandom(32))) -> str:
     return hashlib.sha256(data.encode('utf-8')).hexdigest()

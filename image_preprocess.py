@@ -24,18 +24,24 @@ with open(INFO_JSON_PATH, 'r', encoding='utf-8') as f:
 for i in tqdm(range(start_index, end_index + 1)):
     info = infos[i]
     
-    if info['image'] == None:
+    if info['image'] is None:
         continue
     
     image_path = os.path.join(FACES_DIR_PATH, info['image'])
     embedding = None
     
     try:
-        emage_embedding = AI.get_face_embedding(image_path)
-        embedding = f'{utils.gen_hash()}.npy'
-        with open(os.path.join(EBD_DIR_PATH, embedding), 'wb') as f:
-            np.save(f, embedding)
-    except:
-        pass
+        face_embedding = AI.get_face_embedding(image_path)
+        embedding_filename = f'{utils.gen_hash(image_path)}.npy'
+        embedding_path = os.path.join(EBD_DIR_PATH, embedding_filename)
+        embedding = embedding_filename
+        
+        np.save(embedding_path, face_embedding)
+    except Exception as e:
+        print(f"Error processing image {image_path}: {e}")
+        embedding = None
     
     infos[i]['embedding'] = embedding
+    
+with open('./update_info.json', 'w', encoding='utf-8') as f:
+    f.write(json.dumps(infos, ensure_ascii=False, indent=4))
