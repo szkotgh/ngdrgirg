@@ -14,4 +14,5 @@ main_bp.register_blueprint(face_bp)
 
 @main_bp.route('/', methods=['GET'])
 def home():
+    print(request.url)
     return render_template('index.html', prcs_url=PROCESS_URL)
