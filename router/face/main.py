@@ -18,7 +18,7 @@ def is_face():
         image_data = re.sub('^data:image/.+;base64,', '', image_data)
         image_bytes = base64.b64decode(image_data)
 
-        with open(TEMP_PATH, "wb") as f:
+"?:        with open(TEMP_PATH, "wb") as f:
             f.write(image_bytes)
 
         is_face = Face_Detector.is_face(TEMP_PATH, 0.5)

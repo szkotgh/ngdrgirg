@@ -1,0 +1,11 @@
+[Unit]
+Description=https://github.com/suzukaotto/2024_ngdrgirg
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/szkot/2024_ngdrgirg/app.py
+Restart=always
+User=szkot
+
+[Install]
+WantedBy=multi-user.target

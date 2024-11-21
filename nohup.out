@@ -852,3 +852,66 @@ Press CTRL+C to quit
 127.0.0.1 - - [21/Nov/2024 03:10:11] "POST /face/is_face HTTP/1.0" 200 -
 127.0.0.1 - - [21/Nov/2024 03:10:12] "POST /face/is_face HTTP/1.0" 200 -
 127.0.0.1 - - [21/Nov/2024 03:10:13] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:16:44] "GET / HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:16:58] "GET / HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:09] "GET / HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:12] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:13] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:14] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:15] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:16] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:17] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:18] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:17:19] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:03] "GET / HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:03] "GET /static/favicon.ico HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:05] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:06] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:07] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:08] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:09] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:10] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:11] "POST /face/is_face HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2024 03:20:12] "POST /face/is_face HTTP/1.0" 200 -
+ * Detected change in '/home/szkot/2024_ngdrgirg/router/face/main.py', reloading
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+http://ngdrgirg.szk.kr/
+ * Restarting with stat
+Traceback (most recent call last):
+  File "/home/szkot/2024_ngdrgirg/app.py", line 4, in <module>
+    from flask_app import ServerApp
+  File "/home/szkot/2024_ngdrgirg/flask_app.py", line 6, in <module>
+    from router.main import main_bp
+  File "/home/szkot/2024_ngdrgirg/router/main.py", line 6, in <module>
+    from router.face.main import face_bp
+  File "/home/szkot/2024_ngdrgirg/router/face/main.py", line 21
+    "?:        with open(TEMP_PATH, "wb") as f:
+                                       ^
+SyntaxError: unterminated string literal (detected at line 21)

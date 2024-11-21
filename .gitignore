@@ -1,1 +1,7 @@
+# Python bytecode and cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Specific temporary directories or files
 src/temp
