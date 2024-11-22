@@ -48,10 +48,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <div style="font-size: 1.2rem;">
-                나라에 바칠 목숨이 하나밖에 없는 것이<br>
-                이 소녀의 유일한 슬픔입니다.<br>
-                <span style="font-style: italic; color: gray;">유관순 (1902~1920) - 3.1만세운동</span><br>
+            <div id="wise-quote" style="font-size: 1.2rem;">
+                <!-- Quote will be loaded here -->
             </div>
             <div class="dropdown mt-3">
                 <h3 style="font-size: 1.5rem;">메뉴</h3>
@@ -74,23 +72,37 @@
     {% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/get_wise')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const wise = data.wise;
+                        const wiseQuoteDiv = document.getElementById('wise-quote');
+                        wiseQuoteDiv.innerHTML = `
+                            ${wise.quote}<br>
+                            <span style="font-style: italic; color: gray;">${wise.author} (${wise.years}) - ${wise.event}</span><br>
+                        `;
+                    }
+                })
+                .catch(error => console.error('Error fetching wise quote:', error));
+        });
 
-<script>
-    const accept_btn = document.getElementById('accept_check');
+        const accept_btn = document.getElementById('accept_check');
 
-    if (localStorage.getItem('termsAccepted') === 'true') {
-        accept_btn.style.display = 'block';
-    }
-    accept_btn.addEventListener('click', () => {
-        if (confirm("약관 동의를 철회하시겠습니까?") === false) {
-            return;
+        if (localStorage.getItem('termsAccepted') === 'true') {
+            accept_btn.style.display = 'block';
         }
-        localStorage.setItem('termsAccepted', 'false');
-        accept_btn.style.display = 'none';
-        window.location.href = '/';
-    });
-
-</script>
+        accept_btn.addEventListener('click', () => {
+            if (confirm("약관 동의를 철회하시겠습니까?") === false) {
+                return;
+            }
+            localStorage.setItem('termsAccepted', 'false');
+            accept_btn.style.display = 'none';
+            window.location.href = '/';
+        });
+    </script>
+</body>
 
 </html>

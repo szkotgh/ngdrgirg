@@ -1,6 +1,6 @@
-import base64
 import os
-import re
+import random
+import json
 from flask import Blueprint, render_template, jsonify, request
 from dotenv import load_dotenv
 from router.face.main import face_bp
@@ -17,3 +17,10 @@ main_bp.register_blueprint(army_bp)
 @main_bp.route('/', methods=['GET'])
 def home():
     return render_template('index.html', prcs_url=PROCESS_URL)
+
+@main_bp.route('/get_wise', methods=['GET'])
+def get_wise():
+    with open('db/wise.json', 'r') as f:
+        wise = json.load(f)
+    
+    return jsonify({'status': 'success', 'wise': wise[random.randint(0, len(wise) - 1)]})
