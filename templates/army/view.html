@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .card {
+        margin: 3px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        box-shadow: 0 32px 32px 0 rgba(0, 0, 0, 0.4);
+        transform: scale(1.03);
+    }
+
+    .container {
+        padding: 2px 16px;
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-style: italic;
+    }
+
+    .load-more-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .load-more-btn {
+        font-size: 1.3rem;
+        padding: 10px 10px;
+    }
+</style>
+<div class="container" style="font-family: sans-serif;">
+    <div class="row" style="margin-top: 8%">
+        <div class="col-md-12 text-center">
+            <input type="text" id="search-query" class="form-control" placeholder="검색어를 입력하세요" style="margin-bottom: 20px;">
+        </div>
+    </div>
+    <div class="row" id="army-info-container">
+        <!-- Cards will be appended here -->
+    </div>
+    <div class="row load-more-container">
+        <button id="load-more" class="btn btn-primary load-more-btn">더 불러오기</button>
+    </div>
+</div>
+
+<script>
+    let page = 1;
+    const perPage = 36;
+
+    function loadArmyInfos(reset = false) {
+        const query = document.getElementById('search-query').value;
+        fetch(`/army/api/army_infos?page=${page}&per_page=${perPage}&query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('army-info-container');
+                if (reset) {
+                    container.innerHTML = '';
+                }
+                data.data.forEach(info => {
+                    const card = document.createElement('div');
+                    card.className = 'col-md-2';
+                    card.innerHTML = `
+                        <div class="card mb-2">
+                            <img src="${info.image ? '/army/face/' + info.image : '/static/images/default_image.png'}" class="card-img-top" alt="${info.name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${info.name}</h5>
+                                <div class="card-content" style="height: 75px; font-size: 0.7rem; line-height: 1.3; overflow: auto;">
+                                    <p class="card-text">${info.content}</p>
+                                </div>
+                                <div class="card-content" style="height: 50px; font-size: 0.9rem; line-height: 0.8; overflow: auto;">
+                                    <p class="card-text"><small class="text-muted">${info.activities}</small></p>
+                                </div>
+                                <div style="font-size: 0.9rem;">
+                                    ${info.embedding ? '<span class="text-success">감지 가능</span>' : '<span class="text-secondary">감지 불가</span>'}<br>
+                                    <span>&gt;&nbsp;<a href="https://search.i815.or.kr/dictionary/detail.do?searchWord=&reSearchWord=&index=1&id=${info.id}" class="btn-sm btn-primary" target="_blank">알아보기</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                if (data.data.length < perPage) {
+                    document.getElementById('load-more').style.display = 'none';
+                } else {
+                    document.getElementById('load-more').style.display = 'block';
+                }
+            });
+    }
+
+    document.getElementById('load-more').addEventListener('click', () => {
+        page++;
+        loadArmyInfos();
+    });
+
+    document.getElementById('search-query').addEventListener('input', () => {
+        page = 1;
+        loadArmyInfos(true);
+    });
+
+    loadArmyInfos();
+</script>
+{% endblock %}

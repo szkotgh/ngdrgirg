@@ -81,18 +81,17 @@
     const cameraDesc = document.getElementById('camera-desc');
     const agreeBtn = document.getElementById('agreeBtn');
     const disagreeBtn = document.getElementById('disagreeBtn');
-    let camera_enabled = false;
 
     document.addEventListener('DOMContentLoaded', function() {
         if (localStorage.getItem('termsAccepted') === 'true') {
-            start_camera();
+            startCamera();
         } else {
-            var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
             agreeBtn.addEventListener('click', function() {
                 localStorage.setItem('termsAccepted', 'true');
                 myModal.hide();
-                start_camera();
+                startCamera();
             });
             disagreeBtn.addEventListener('click', function() {
                 localStorage.setItem('termsAccepted', 'false');
@@ -103,13 +102,12 @@
         }
     });
 
-    function start_camera() {
-        navigator.mediaDevices.getUserMedia({
-                video: true
-            })
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
-                start_capture();
                 video.srcObject = stream;
+                video.play();
+                startCapture();
             })
             .catch((err) => {
                 console.error("Error accessing the camera: ", err);
@@ -122,67 +120,91 @@
             });
     }
 
-    function start_capture() {
-        let face_stack = 0;
-        let face_data = [];
-        let capture_interval = setInterval(() => {
+    function captureDataSend(imageData) {
+        fetch('/army/compare', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: imageData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.rstId) {
+                window.location.href = "army/compare/result/" + data.rstId;
+            } else {
+                cuteToast({
+                    type: "error", // or 'info', 'error', 'warning'
+                    title: "분석 결과를 받아오지 못했습니다.",
+                    message: "다시 시도해보세요..",
+                    timer: 3000,
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error server connect: " + error);
+            cuteToast({
+                type: "error", // or 'info', 'error', 'warning'
+                title: "서버와 연결을 실패했습니다.",
+                message: "인터넷은 잘 연결되어있나요?",
+                timer: 3000,
+            });
+        });
+    }
+
+    function startCapture() {
+        let faceStack = 0;
+        const captureInterval = setInterval(() => {
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
 
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
             const imageData = canvas.toDataURL('image/jpeg');
 
             fetch('{{ prcs_url }}/face/is_face', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        image: imageData
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    if (data.is_face) {
-                        cameraBorder.style.borderColor = 'lime';
-                        face_stack += 1;
-                    } else {
-                        cameraBorder.style.borderColor = 'red';
-                        face_stack = 0;
-                    }
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_face) {
+                    cameraBorder.style.borderColor = 'lime';
+                    faceStack += 1;
+                } else {
+                    cameraBorder.style.borderColor = 'red';
+                    faceStack = 0;
+                }
 
-                    if (face_stack == 0) {
-                        cameraDesc.textContent = "카메라에 얼굴을 보여주세요.";
-                        face_data = [];
-                    } else if (face_stack < 3) {
-                        cameraDesc.textContent = "얼굴이 잘 보여요!";
-                    } else if (face_stack < 8) {
-                        cameraBorder.style.borderColor = 'orange';
-                        cameraDesc.textContent = (8 - face_stack) + "초 뒤 촬영됩니다 . . .";
-                        face_data.push(imageData);
-                    } else {
-                        clearInterval(capture_interval);
-                        cameraDesc.textContent = "잠시만 기다려주세요 . . .";
-                    }
-                })
-                .catch(error => {
-                    console.error("Error server connect: " + error);
-                    cuteToast({
-                        type: "error", // or 'info', 'error', 'warning'
-                        title: "서버와 연결을 실패했습니다.",
-                        message: "인터넷은 잘 연결되어있나요?",
-                        timer: 3000,
-                    });
-                    clearInterval(capture_interval);
-                    cameraBorder.style.borderColor = 'gray';
-                    cameraDesc.textContent = "";
-                    cameraDesc.innerHTML = "<a href='{{ prcs_url }}' style='color: blue;'>새로고침</a> 후 다시 시도하세요.";
-                    face_stack = 0;
+                if (faceStack === 0) {
+                    cameraDesc.textContent = "카메라에 얼굴을 보여주세요.";
+                } else if (faceStack < 3) {
+                    cameraDesc.textContent = "얼굴이 잘 보여요!";
+                } else if (faceStack < 8) {
+                    cameraBorder.style.borderColor = 'orange';
+                    cameraDesc.textContent = (8 - faceStack) + "초 뒤 촬영됩니다 . . .";
+                } else {
+                    clearInterval(captureInterval);
+                    cameraDesc.textContent = "잠시만 기다려주세요 . . .";
+                    captureDataSend(imageData);
+                }
+            })
+            .catch(error => {
+                console.error("Error server connect: " + error);
+                cuteToast({
+                    type: "error", // or 'info', 'error', 'warning'
+                    title: "서버와 연결을 실패했습니다.",
+                    message: "인터넷은 잘 연결되어있나요?",
+                    timer: 3000,
                 });
+                clearInterval(captureInterval);
+                cameraBorder.style.borderColor = 'gray';
+                cameraDesc.innerHTML = "<a href='{{ prcs_url }}' style='color: blue;'>새로고침</a> 후 다시 시도하세요.";
+            });
         }, 1000);
     }
 </script>

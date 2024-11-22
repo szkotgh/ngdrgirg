@@ -13,41 +13,60 @@
     <script src="{{ url_for('static', filename='libs/cute-alert-master/cute-alert.js') }}"></script>
     <style>
         @font-face {
-            font-family: 'BMYEONSUNG_ttf';
-            src: url('{{ url_for('static', filename='fonts/BMYEONSUNG_ttf.ttf') }}') format('truetype');
+            font-family: 'BMHANNAAir';
+            src: url('{{ url_for('static', filename='fonts/BMHANNAAir.ttf') }}') format('truetype');
         }
         body {
-            font-family: 'BMYEONSUNG_ttf', 'Noto Sans KR', sans-serif;
+            font-family: 'BMHANNAAir', 'Noto Sans KR', sans-serif;
+        }
+        .github-icon {
+            width: 30px;
+            height: 30px;
+        }
+        .offcanvas-footer {
+            margin-left: 20px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body class="bg-gray-200">
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                 <img src="{{ url_for('static', filename='favicon.png') }}" alt="=" width="40" height="40" class="d-inline-block align-text-top">
-                <h3 class="mb-0 ms-2" style="font-size: 1.5rem">내가 독립군이라고??</h3>
+                <h3 class="mb-0 ms-2" style="font-size: 1.5rem">내가 독립운동가라고??</h3>
             </a>
         </div>
     </nav>
 
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel" style="font-size: 1.5rem;">내가 독립군이라고??</h5>
+            <a href="/" style="text-decoration: none;">
+                <h5 class="offcanvas-title fw-bold" id="offcanvasExampleLabel" style="font-size: 1.5rem;">내가 독립운동가라고??</h5>
+            </a>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div style="font-size: 1.2rem;">
-                당신과 비슷한 독립운동가를 찾아보셔요.
+                나라에 바칠 목숨이 하나밖에 없는 것이<br>
+                이 소녀의 유일한 슬픔입니다.<br>
+                <span style="font-style: italic; color: gray;">유관순 (1902~1920) - 3.1만세운동</span><br>
             </div>
             <div class="dropdown mt-3">
                 <h3 style="font-size: 1.5rem;">메뉴</h3>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">&gt;&nbsp;<a href="/">메인메뉴</a></li>
-                    <li class="list-group-item">&gt;&nbsp;<a href="/view">독립운동가 열람</a></li>
+                    <li class="list-group-item">&gt;&nbsp;<a href="/">내가 독립운동가라고?</a></li>
+                    <li class="list-group-item">&gt;&nbsp;<a href="/army/view">독립운동가 열람</a></li>
                 </ul>
+                
             </div>
+        </div>
+        <div class="offcanvas-footer">
+            <a href="https://github.com/suzukaotto/2024_ngdrgirg">
+                <img src="{{ url_for('static', filename='images/github_micon.png') }}" alt="GitHub Icon" class="github-icon">
+            </a>
+            <button id="accept_check" class="btn btn-secondary" style="display: none; margin-top: 10px;">약관 동의 철회</button>
         </div>
     </div>
 
@@ -56,5 +75,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
+
+<script>
+    const accept_btn = document.getElementById('accept_check');
+
+    if (localStorage.getItem('termsAccepted') === 'true') {
+        accept_btn.style.display = 'block';
+    }
+    accept_btn.addEventListener('click', () => {
+        if (confirm("약관 동의를 철회하시겠습니까?") === false) {
+            return;
+        }
+        localStorage.setItem('termsAccepted', 'false');
+        accept_btn.style.display = 'none';
+        window.location.href = '/';
+    });
+
+</script>
 
 </html>
