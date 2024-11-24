@@ -39,6 +39,13 @@
         font-size: 1.3rem;
         padding: 10px 10px;
     }
+
+    .no-results {
+        text-align: center;
+        font-size: 1.5rem;
+        color: gray;
+        margin-top: 20px;
+    }
 </style>
 <div class="container" style="font-family: sans-serif;">
     <div class="row" style="margin-top: 8%">
@@ -49,6 +56,9 @@
     <div class="row" id="army-info-container">
         <!-- Cards will be appended here -->
     </div>
+    <div class="row">
+        <div id="no-results" class="no-results" style="display: none;">결과 없음</div>
+    </div>
     <div class="row load-more-container">
         <button id="load-more" class="btn btn-primary load-more-btn">더 불러오기</button>
     </div>
@@ -57,6 +67,7 @@
 <script>
     let page = 1;
     const perPage = 36;
+    let debounceTimeout;
 
     function loadArmyInfos(reset = false) {
         const query = document.getElementById('search-query').value;
@@ -64,39 +75,55 @@
             .then(response => response.json())
             .then(data => {
                 const container = document.getElementById('army-info-container');
+                const noResults = document.getElementById('no-results');
+                const loadMoreButton = document.getElementById('load-more');
                 if (reset) {
                     container.innerHTML = '';
                 }
-                data.data.forEach(info => {
-                    const card = document.createElement('div');
-                    card.className = 'col-md-2';
-                    card.innerHTML = `
-                        <div class="card mb-2">
-                            <img src="${info.image ? '/army/face/' + info.image : '/static/images/default_image.png'}" class="card-img-top" alt="${info.name}">
-                            <div class="card-body">
-                                <h5 class="card-title">${info.name}</h5>
-                                <div class="card-content" style="height: 75px; font-size: 0.7rem; line-height: 1.3; overflow: auto;">
-                                    <p class="card-text">${info.content}</p>
-                                </div>
-                                <div class="card-content" style="height: 50px; font-size: 0.9rem; line-height: 0.8; overflow: auto;">
-                                    <p class="card-text"><small class="text-muted">${info.activities}</small></p>
-                                </div>
-                                <div style="font-size: 0.9rem;">
-                                    ${info.embedding ? '<span class="text-success">감지 가능</span>' : '<span class="text-secondary">감지 불가</span>'}<br>
-                                    <span>&gt;&nbsp;<a href="https://search.i815.or.kr/dictionary/detail.do?searchWord=&reSearchWord=&index=1&id=${info.id}" class="btn-sm btn-primary" target="_blank">알아보기</a></span>
+                if (data.data.length === 0) {
+                    noResults.style.display = 'block';
+                    loadMoreButton.style.display = 'none'; // Hide load more button
+                } else {
+                    noResults.style.display = 'none';
+                    data.data.forEach(info => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-2';
+                        card.innerHTML = `
+                            <div class="card mb-2">
+                                <img src="${info.image ? '/face/army/' + info.image : '/static/images/default_image.png'}" class="card-img-top" alt="${info.name}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${info.name}</h5>
+                                    <div class="card-content" style="height: 75px; font-size: 0.7rem; line-height: 1.3; overflow: auto;">
+                                        <p class="card-text">${info.content}</p>
+                                    </div>
+                                    <div class="card-content" style="height: 50px; font-size: 0.9rem; line-height: 0.8; overflow: auto;">
+                                        <p class="card-text"><small class="text-muted">${info.activities}</small></p>
+                                    </div>
+                                    <div style="font-size: 0.9rem;">
+                                        ${info.embedding ? '<span class="text-success">감지 가능</span>' : '<span class="text-secondary">감지 불가</span>'}<br>
+                                        <span>&gt;&nbsp;<a href="https://search.i815.or.kr/dictionary/detail.do?searchWord=&reSearchWord=&index=1&id=${info.id}" class="btn-sm btn-primary" target="_blank">알아보기</a></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
+                        `;
+                        container.appendChild(card);
+                    });
 
-                if (data.data.length < perPage) {
-                    document.getElementById('load-more').style.display = 'none';
-                } else {
-                    document.getElementById('load-more').style.display = 'block';
+                    if (data.data.length < perPage) {
+                        loadMoreButton.style.display = 'none';
+                    } else {
+                        loadMoreButton.style.display = 'block';
+                    }
                 }
             });
+    }
+
+    function debounceSearch() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            page = 1;
+            loadArmyInfos(true);
+        }, 300);
     }
 
     document.getElementById('load-more').addEventListener('click', () => {
@@ -104,10 +131,7 @@
         loadArmyInfos();
     });
 
-    document.getElementById('search-query').addEventListener('input', () => {
-        page = 1;
-        loadArmyInfos(true);
-    });
+    document.getElementById('search-query').addEventListener('input', debounceSearch);
 
     loadArmyInfos();
 </script>

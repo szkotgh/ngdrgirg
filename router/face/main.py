@@ -1,7 +1,7 @@
 import base64
 import re
 import os
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, send_file
 import src.utils as utils
 
 OPTION = utils.get_option()
@@ -29,3 +29,26 @@ def is_face():
     except Exception as e:
         return jsonify({'status': 'error', 'status_msg': f"An unknown error has occurred: {str(e)}"})
 
+@face_bp.route('/army/<image_name>', methods=['GET'])
+def face(image_name):
+    image_path = f"db/army_db/faces/{image_name}.jpg"
+    if os.path.exists(image_path):
+        try:
+            return send_file(image_path, mimetype='image/jpeg')
+        except Exception as e:
+            return jsonify({'status': 'error', 'status_msg': f"Error loading image: {str(e)}"}), 500
+    else:
+        return jsonify({'status': 'error', 'status_msg': 'Invalid id'}), 404
+    
+@face_bp.route('/your/<face_id>', methods=['GET'])
+def yourface(face_id):
+    image_path = f"src/temp/{face_id}.jpg"
+    if os.path.exists(image_path):
+        try:
+            response = send_file(image_path, mimetype='image/jpeg')
+            os.remove(image_path)
+            return response
+        except Exception as e:
+            return jsonify({'status': 'error', 'status_msg': f"Error loading image: {str(e)}"}), 500
+    else:
+        return jsonify({'status': 'error', 'status_msg': 'Invalid id'}), 404

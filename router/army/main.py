@@ -77,30 +77,6 @@ def result(result_id):
     else:
         return redirect('/')
 
-@army_bp.route('/face/<image_name>', methods=['GET'])
-def face(image_name):
-    image_path = f"db/army_db/faces/{image_name}"
-    if os.path.exists(image_path):
-        try:
-            return send_file(image_path, mimetype='image/jpeg')
-        except Exception as e:
-            return jsonify({'status': 'error', 'status_msg': f"Error loading image: {str(e)}"}), 500
-    else:
-        return jsonify({'status': 'error', 'status_msg': 'Image not found'}), 404
-
-@army_bp.route('/yourface/<face_id>', methods=['GET'])
-def yourface(face_id):
-    image_path = f"src/temp/{face_id}.jpg"
-    if os.path.exists(image_path):
-        try:
-            response = send_file(image_path, mimetype='image/jpeg')
-            os.remove(image_path)
-            return response
-        except Exception as e:
-            return jsonify({'status': 'error', 'status_msg': f"Error loading image: {str(e)}"}), 500
-    else:
-        return jsonify({'status': 'error', 'status_msg': 'Image not found'}), 404
-
 @army_bp.route('/view', methods=['GET'])
 def view():
     return render_template('/army/view.html')

@@ -17,7 +17,7 @@
 
     .image-container img {
         width: 50%; /* Set the desired width */
-        height: auto; /* Maintain aspect ratio */
+        height: 100%; /* Maintain aspect ratio */
     }
 
     .leaderboard-container {
@@ -54,11 +54,11 @@
         <span style="font-size: 1rem;">당신과 닮은 독립운동가이십니다.</span>
     </div>
     <div class="image-container">
-        <img src="/army/yourface/{{ yourface_id }}" alt="Image 1" class="img-fluid" onerror="this.onerror=null;this.src='/static/images/default_image.png';">
+        <img src="/face/your/{{ yourface_id }}" alt="Image 1" class="img-fluid" onerror="this.onerror=null;this.src='/static/images/default_image.png';">
         <p style="font-size: 1.6rem; font-family: sans-serif;">당신의 얼굴</p>
     </div>
     <div class="image-container">
-        <img src="/army/face/{{ army_infos[0]['image'] }}" alt="Image 2" class="img-fluid" onerror="this.onerror=null;this.src='/static/images/default_image.png';">
+        <img src="/face/army/{{ army_infos[0]['image'] }}" alt="Image 2" class="img-fluid" onerror="this.onerror=null;this.src='/static/images/default_image.png';">
         <p style="font-size: 1.6rem; font-family: sans-serif;">{{ army_infos[0]['name'] }}</p>
     </div>
     <div class="leaderboard-container">
@@ -70,7 +70,7 @@
             <li>4. <span style="font-family: sans-serif;">{{ army_infos[3]['name'] }}</span>&nbsp;{{ army_infos[3]['distance'] }}&#37;&nbsp;<a href="https://search.i815.or.kr/dictionary/detail.do?searchWord=&reSearchWord=&index=1&id={{ army_infos[3]['id'] }}" class="btn-sm btn-primary" target="_blank">자세히 보기</a></li>
             <li>5. <span style="font-family: sans-serif;">{{ army_infos[4]['name'] }}</span>&nbsp;{{ army_infos[4]['distance'] }}&#37;&nbsp;<a href="https://search.i815.or.kr/dictionary/detail.do?searchWord=&reSearchWord=&index=1&id={{ army_infos[4]['id'] }}" class="btn-sm btn-primary" target="_blank">자세히 보기</a></li>
         </ul>
-        <p> * 자신의 얼굴은 최초 한번만 열람됩니다.</p>
+        <p> * 자신의 얼굴은 최초 1회 열람 후 삭제됩니다.</p>
         <a href="/">홈으로</a>
     </div>
 </div>

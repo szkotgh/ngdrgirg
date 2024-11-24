@@ -81,7 +81,7 @@ class FaceRecognition:
         face = self.extract_face(image, detection_threshold)
         
         if face is None:
-            raise ValueError("Face not detected in the image.")
+            return None
         
         # Generate and return the face embedding
         face_embedding = self.reid_model.infer_new_request({0: face})[self.reid_model.outputs[0]]
