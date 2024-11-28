@@ -8,7 +8,7 @@ Type=simple
 ExecStart=/bin/sudo /bin/bash /home/szkot/2024_ngdrgirg/stater.sh
 Restart=on-failure
 RestartSec=5
-User=szkot
+User=root
 
 [Install]
 WantedBy=multi-user.target
