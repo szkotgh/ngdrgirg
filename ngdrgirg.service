@@ -1,11 +1,11 @@
 [Unit]
 Description=내가 독립군이라고?
-Documentation=https://github.com/suzukaotto/2024_ngdrgirg
+Documentation=https://github.com/suzukaotto/ngdrgirg
 After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/bin/sudo /bin/bash /home/szkot/2024_ngdrgirg/stater.sh
+ExecStart=/bin/sudo /bin/bash /home/szkot/ngdrgirg/stater.sh
 Restart=on-failure
 RestartSec=5
 User=root
